@@ -19,7 +19,7 @@ endforeach()
 
 # App
 add_executable(${PROJECT_NAME} src/Application.cpp
-    src/Shader.cpp )
+    src/Shader.cpp src/Window.cpp )
 
 find_package(glfw3 CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
