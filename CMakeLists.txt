@@ -17,6 +17,12 @@ foreach(shader ${SHADER_FILES})
     configure_file(${shader} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 endforeach()
 
+file(GLOB TEXTURES "${CMAKE_SOURCE_DIR}/Textures/*")
+
+foreach(tex ${TEXTURES})
+    configure_file(${tex} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+endforeach()
+
 # App
 add_executable(${PROJECT_NAME} src/Application.cpp
     src/Shader.cpp src/Window.cpp )
