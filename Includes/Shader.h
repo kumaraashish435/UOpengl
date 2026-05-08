@@ -13,6 +13,7 @@ public:
 
     std::string loadShaderSource(const char* filePath);
     GLuint compileShader(const char* source, GLenum type);
+    void compileErrors(GLuint shader, GLenum type);
 
     //uniform functions
     void setMat4(const std::string &name, const glm::mat4 &mat);

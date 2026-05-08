@@ -15,14 +15,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     glAttachShader(ID, fragmentShader);
     glLinkProgram(ID);
 
-    //check for linking errors
-    int success;
-    char infoLog[512];
-    glGetProgramiv(ID, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(ID, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-    }
+    compileErrors(ID, GL_PROGRAM);
     
     //delete shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertexShader);
@@ -60,15 +53,29 @@ GLuint Shader::compileShader(const char* source, GLenum type)
     glCompileShader(shader);
 
     //check for shader compile errors
-    int success;
-    char infoLog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success)    {
-        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
+    compileErrors(shader, type);
 
     return shader;
+}
+
+void Shader::compileErrors(GLuint shader, GLenum type)
+{
+    int success;
+    char infoLog[512];
+    if (type != GL_PROGRAM)    {
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+        if (!success)    {
+            glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+            std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
+        }
+    }
+    else    {
+        glGetProgramiv(shader, GL_LINK_STATUS, &success);
+        if (!success)    {
+            glGetProgramInfoLog(shader, 512, nullptr, infoLog);
+            std::cout << "ERROR::SHADER::LINKING_FAILED\n" << infoLog << std::endl;
+        }
+    }
 }
 
 void Shader::setMat4(const std::string &name, const glm::mat4 &mat)

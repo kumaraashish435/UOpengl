@@ -34,7 +34,8 @@ add_executable(${PROJECT_NAME}
     Src/Window.cpp
     Src/EBO.cpp
     Src/VAO.cpp
-    Src/VBO.cpp 
+    Src/VBO.cpp
+    Src/Texture.cpp 
 )
 
 find_package(glfw3 CONFIG REQUIRED)
