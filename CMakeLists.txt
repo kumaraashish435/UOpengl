@@ -6,8 +6,12 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # GLAD
-add_library(glad STATIC dependencies/glad/src/glad.c)
-target_include_directories(glad PUBLIC dependencies/glad/include dependencies/stb )
+add_library(glad STATIC Dependencies/glad/src/glad.c)
+target_include_directories(glad PUBLIC 
+    Dependencies/glad/include 
+    Dependencies/stb 
+    Includes
+)
 
 # shader directory
 # shader files
@@ -24,8 +28,14 @@ foreach(tex ${TEXTURES})
 endforeach()
 
 # App
-add_executable(${PROJECT_NAME} src/Application.cpp
-    src/Shader.cpp src/Window.cpp )
+add_executable(${PROJECT_NAME} 
+    Src/Application.cpp
+    Src/Shader.cpp 
+    Src/Window.cpp
+    Src/EBO.cpp
+    Src/VAO.cpp
+    Src/VBO.cpp 
+)
 
 find_package(glfw3 CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)

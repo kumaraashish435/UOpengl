@@ -1,10 +1,28 @@
 #include "Shader.h"
-
 #include "Window.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "EBO.h"
+#include "VAO.h"
+#include "VBO.h"
+
+
+//vertex data
+float vertices[] = {
+    //rectangle             color                  texture coords
+     0.5f,  0.5f, 0.0f,     1.0f, 0.0f, 0.0f,      1.0f, 1.0f,           // top right
+     0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f,      1.0f, 0.0f,           // bottom right
+    -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,      0.0f, 0.0f,           // bottom left
+    -0.5f,  0.5f, 0.0f,     1.0f, 1.0f, 0.0f,      0.0f, 1.0f,           // top left
+};
+
+// index data
+unsigned int indices[] = {
+    0, 1, 3,
+    1, 2, 3
+};
 
 int main()
 {
@@ -15,53 +33,50 @@ int main()
 
     //window
     Window window;
-
     //shader
     Shader shader("vertex.txt", "fragment.txt");
 
-
-    //vertex data
-    float vertices[] = {
-        //rectangle             color                  texture coords
-         0.5f,  0.5f, 0.0f,     1.0f, 0.0f, 0.0f,      1.0f, 1.0f,           // top right
-         0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f,      1.0f, 0.0f,           // bottom right
-        -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,      0.0f, 0.0f,           // bottom left
-        -0.5f,  0.5f, 0.0f,     1.0f, 1.0f, 0.0f,      0.0f, 1.0f,           // top left
-    };
-
-    // index data
-    unsigned int indices[] = {
-        0, 1, 3,
-        1, 2, 3
-    };
+    
 
     // buffers
-    unsigned int VBO, VAO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    // unsigned int VBO, VAO, EBO;
+    // glGenVertexArrays(1, &VAO);
+    // glGenBuffers(1, &VBO);
+    // glGenBuffers(1, &EBO);
+
+    VAO VAO1;
+    VAO1.Bind();
+
+    VBO VBO1(vertices, sizeof(vertices));
+    EBO EBO1(indices, sizeof(indices));
+    
+
+    VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8*sizeof(float), (void*)0);                 // position
+    VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8*sizeof(float), (void*)(3*sizeof(float))); // color
+
+    VAO1.Unbind();
+    VBO1.Unbind();
 
 
-    // bind vertex array object
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // // bind vertex array object
+    // glBindVertexArray(VAO);  // Now everything I do gets stored in VAO
 
-    // bind element array buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    // // bind vertex buffer and copy data
+    // glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    //position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    // // bind element buffer and copy data
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    //color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+    // //position attribute
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    // glEnableVertexAttribArray(0);
 
-    // texture coord attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
+    // //color attribute
+    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    // glEnableVertexAttribArray(1);
+
 
 
     // load and create texture
@@ -89,11 +104,8 @@ int main()
     }
     stbi_image_free(data);
 
-    // transformation
-    // glm::mat4 trans = glm::mat4(1.0f);
-    // trans = glm::rotate(trans, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    // shader.Activate();
-    // shader.setMat4("transform", trans);
+    shader.Activate();
+
 
 
     // render loop
@@ -117,13 +129,20 @@ int main()
         shader.Activate();
 
         // draw rectangle
-        glBindVertexArray(VAO);
+        // glBindVertexArray(VAO);
+        VAO1.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // update window
         window.Update();
     }
 
+    // glDeleteVertexArrays(1, &VAO);
+    // glDeleteBuffers(1, &VBO);
+    // glDeleteBuffers(1, &EBO);
+    VAO1.Delete();
+    VBO1.Delete();
+    EBO1.Delete();
     glDeleteProgram(shader.ID);
     std::cout << "exiting application..." << std::endl;
 
