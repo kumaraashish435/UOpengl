@@ -30,7 +30,7 @@ int main()
     //window
     Window window;
     //shader
-    Shader shader("vertex.txt", "fragment.txt");
+    Shader shader("vertex.glsl", "fragment.glsl");
 
     //VAO, VBO, EBO setup
     VAO VAO1;

@@ -15,7 +15,7 @@ target_include_directories(glad PUBLIC
 
 # shader directory
 # shader files
-file(GLOB SHADER_FILES "${CMAKE_SOURCE_DIR}/shaders/*.txt")
+file(GLOB SHADER_FILES "${CMAKE_SOURCE_DIR}/shaders/*.glsl")
 
 foreach(shader ${SHADER_FILES})
     configure_file(${shader} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
