@@ -15,43 +15,29 @@ uniform vec3 cameraPos;
 void main()
 {
     // Ambient
-    float ambient = 0.1;
+    float ambient = 0.2;
 
     // Diffuse
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(lightPos - crntPos);
-
-    float diffuse =
-        max(dot(norm, lightDir), 0.0);
+    float diffuse = max(dot(norm, lightDir), 0.0);
 
     // Specular
     float specularStrength = 0.5;
-
-    vec3 viewDir =
-        normalize(cameraPos - crntPos);
-
-    vec3 reflectDir =
-        reflect(-lightDir, norm);
-
+    vec3 viewDir = normalize(cameraPos - crntPos);
+    vec3 reflectDir = reflect(-lightDir, norm);
     float spec = 0.0;
 
     if(diffuse > 0.0)
-    {
-        spec =
-            pow(max(dot(viewDir, reflectDir), 0.0), 32);
+{
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
     }
 
-    float specular =
-        specularStrength * spec;
-
+    float specular = specularStrength * spec;
     // Texture
-    vec4 texColor =
-        texture(texture1, TexCoord);
+    vec4 texColor = texture(texture1, TexCoord);
+     // Final lighting
+    vec3 lighting = lightColor.rgb * (ambient + diffuse + specular);
 
-    // Final lighting
-    vec3 lighting =
-        lightColor.rgb * (ambient + diffuse + specular);
-
-    FragColor =
-        vec4(texColor.rgb * lighting, texColor.a);
+    FragColor = vec4(texColor.rgb * lighting, texColor.a);
 }
