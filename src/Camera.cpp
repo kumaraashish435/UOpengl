@@ -18,74 +18,70 @@ void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane)
     cameraMatrix = projection * view;
 }
 
-void Camera::Matrix(Shader& shader, const char* uniform)
+void Camera::Matrix(Shader &shader, const char *uniform)
 {
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 }
 
-
-void Camera::Inputs(GLFWwindow* window)
+void Camera::Inputs(GLFWwindow *window)
 {
-    // Forward
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        Position += speed * Orientation;
-
-    // Backward
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        Position -= speed * Orientation;
-
-    // Left
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        Position -= glm::normalize(glm::cross(Orientation, Up)) * speed;
-
-    // Right
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        Position += glm::normalize(glm::cross(Orientation, Up)) * speed;
-
-    // Up
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        Position += speed * Up;
-
-    // Down
-    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-        Position -= speed * Up;
-
-    // Look around
+    // Look around object
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
-        // Hide mouse cursor
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);  
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-
-        if(firstClick)
+        if (firstClick)
         {
             glfwSetCursorPos(window, width / 2, height / 2);
             firstClick = false;
         }
 
-        double mouseX, mouseY;
+        double mouseX;
+        double mouseY;
+
         glfwGetCursorPos(window, &mouseX, &mouseY);
 
-        float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
-        float rotY = sensitivity * (float)(mouseX - (width / 2)) / width;
+        float xOffset =
+            sensitivity * (float)(mouseX - width / 2) / width;
 
-        glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotX), glm::normalize(glm::cross(Orientation, Up)));
+        float yOffset =
+            sensitivity * (float)(mouseY - height / 2) / height;
 
-        if(!(glm::angle(newOrientation, Up) <= glm::radians(5.0f) or glm::angle(newOrientation, -Up ) <= glm::radians(5.0f)))
-        {
-            Orientation = newOrientation;
-        }
-        Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
+        yaw += xOffset * 100.0f;
+        pitch -= yOffset * 100.0f;
 
-        // Reset mouse position to the center of the screen
+        // Prevent flipping
+        if (pitch > 89.0f)
+            pitch = 89.0f;
+
+        if (pitch < -89.0f)
+            pitch = -89.0f;
+
+        // Convert spherical coordinates to cartesian
+        glm::vec3 direction;
+
+        direction.x =
+            cos(glm::radians(yaw)) *
+            cos(glm::radians(pitch));
+
+        direction.y =
+            sin(glm::radians(pitch));
+
+        direction.z =
+            sin(glm::radians(yaw)) *
+            cos(glm::radians(pitch));
+
+        // Orbit around target
+        Position = target - glm::normalize(direction) * distance;
+
+        // Look at target
+        Orientation = glm::normalize(target - Position);
+
         glfwSetCursorPos(window, width / 2, height / 2);
     }
-    else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+    else
     {
-        // Show mouse cursor
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         firstClick = true;
     }
-        
-    
 }

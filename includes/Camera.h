@@ -14,6 +14,13 @@ public:
     glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::mat4 cameraMatrix = glm::mat4(1.0f);
 
+    float yaw = -90.0f;
+    float pitch = 0.0f;
+
+    float distance = 3.0f;
+
+    glm::vec3 target = glm::vec3(0.0f);
+
     int height;
     int width;
     bool firstClick = true;
