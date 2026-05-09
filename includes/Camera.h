@@ -12,6 +12,7 @@ public:
     glm::vec3 Position;
     glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::mat4 cameraMatrix = glm::mat4(1.0f);
 
     int height;
     int width;
@@ -25,7 +26,9 @@ public:
     Camera(int width, int height, glm::vec3 position);
 
     // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
-    void Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform);
+    void Matrix(Shader& shader, const char* uniform);
+    void updateMatrix(float FOVdeg, float nearPlane, float farPlane);
+
     void Inputs(GLFWwindow* window);
     
 private:
