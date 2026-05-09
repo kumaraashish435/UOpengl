@@ -1,6 +1,6 @@
 #include "Shader.h"
 #include "Window.h"
-
+#include "Application.h"
 
 #include "EBO.h"
 #include "VAO.h"
@@ -8,21 +8,48 @@
 
 #include "Texture.h"
 
+#include "Camera.h"
 
-//vertex data
+
+// //vertex data
+// float vertices[] = {
+//     //rectangle             color                  texture coords
+//      0.5f,  0.5f, 0.0f,     1.0f, 0.0f, 0.0f,      1.0f, 1.0f,           // top right
+//      0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f,      1.0f, 0.0f,           // bottom right
+//     -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,      0.0f, 0.0f,           // bottom left
+//     -0.5f,  0.5f, 0.0f,     1.0f, 1.0f, 0.0f,      0.0f, 1.0f,           // top left
+// };
+
+// // index data
+// unsigned int indices[] = {
+//     0, 1, 3,
+//     1, 2, 3
+// };
+
+//vertex data for draw 3d pyramid
 float vertices[] = {
-    //rectangle             color                  texture coords
-     0.5f,  0.5f, 0.0f,     1.0f, 0.0f, 0.0f,      1.0f, 1.0f,           // top right
-     0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f,      1.0f, 0.0f,           // bottom right
-    -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,      0.0f, 0.0f,           // bottom left
-    -0.5f,  0.5f, 0.0f,     1.0f, 1.0f, 0.0f,      0.0f, 1.0f,           // top left
+    // positions          // colors           // texture coords
+     -0.5f, 0.0f,  0.5f,  1.0f, 0.0f, 0.0f,   0.5f, 1.0f,   // front-left
+     -0.5f, 0.0f, -0.5f,  0.0f, 1.0f, 0.0f,   0.0f, 1.0f,   // back-left
+      0.5f, 0.0f, -0.5f,  0.0f, 0.0f, 1.0f,   1.0f, 1.0f,   // back-right
+      0.5f, 0.0f,  0.5f,  1.0f, 1.0f, 0.0f,   1.0f, 1.0f,   // front-right
+      0.0f, 1.0f,  0.0f,  1.0f, 1.0f, 1.0f,   0.5f, 2.0f    // top
+};  
+// index data for draw 3d pyramid
+unsigned int indices[] = {
+    // Side faces
+    0, 1, 4,   // left side
+    1, 2, 4,   // back side
+    2, 3, 4,   // right side
+    3, 0, 4,   // front side
+
+    // Bottom face
+    0, 1, 2,
+    0, 2, 3
 };
 
-// index data
-unsigned int indices[] = {
-    0, 1, 3,
-    1, 2, 3
-};
+const unsigned int WIDTH = 800;
+const unsigned int HEIGHT = 800;
 
 int main()
 {
@@ -54,6 +81,12 @@ int main()
     shader.Activate();
     tex.texUnit(shader, "texture1", 0);
 
+
+
+    glEnable(GL_DEPTH_TEST); // Enable depth testing for 3D rendering
+
+    Camera camera(WIDTH, HEIGHT, glm::vec3(0.0f, 0.3f, 3.0f));
+
     // render loop
     while (!window.ShouldClose())
     {
@@ -64,11 +97,14 @@ int main()
         // activate shader program
         shader.Activate();
 
+        camera.Inputs(window.GetWindow());
+        camera.Matrix(45.0f, 0.1f, 100.0f, shader, "MVP");
+
         // Render container
         // bind textures on corresponding texture units
         VAO1.Bind();
         tex.Bind(GL_TEXTURE0);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 
         // update window
         window.Update();

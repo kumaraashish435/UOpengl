@@ -12,6 +12,7 @@ public:
     void Update();
     void Clear(float r, float g, float b, float a);
     void processInput();
+    GLFWwindow* GetWindow();
 
 private:
     GLFWwindow* m_Window;
