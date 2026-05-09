@@ -74,11 +74,6 @@ int main()
         window.Update();
     }
 
-    VAO1.Delete();
-    VBO1.Delete();
-    EBO1.Delete();
-    tex.Delete();
-    glDeleteProgram(shader.ID);
     std::cout << "exiting application..." << std::endl;
 
     return 0;

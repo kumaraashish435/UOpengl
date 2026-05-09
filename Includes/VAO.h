@@ -11,6 +11,8 @@ public:
 	GLuint ID;
 	// Constructor that generates a VAO ID
 	VAO();
+	// Destructor that deletes the VAO
+	~VAO();
 	
 	// Links a VBO to the VAO using a certain layout
 	void LinkAttrib(VBO& vbo, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
@@ -18,7 +20,6 @@ public:
 	void Bind();
 	// Unbinds the VAO
 	void Unbind();
-	// Deletes the VAO
-	void Delete();
+
 };
 #endif

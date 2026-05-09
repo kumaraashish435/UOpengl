@@ -10,10 +10,10 @@ public:
     unsigned int ID;
     GLenum type;
     Texture(const char* image, GLenum texType, GLenum slot, GLenum pixelType);
+    ~Texture();
 
     void texUnit(Shader &shader, const char* uniform, unsigned int unit);
     void Bind(GLenum slot);
     void Unbind();
-    void Delete();
 };
 #endif
