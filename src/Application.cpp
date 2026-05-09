@@ -65,7 +65,7 @@ int main()
         shader.Activate();
 
         // Render container
-        // glBindVertexArray(VAO);
+        // bind textures on corresponding texture units
         VAO1.Bind();
         tex.Bind(GL_TEXTURE0);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
