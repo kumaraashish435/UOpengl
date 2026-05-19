@@ -2,12 +2,13 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum pixelType)
+Texture::Texture(const char* image, GLenum texType, GLuint slot, GLenum pixelType)
 {
     type = texType;
 
     glGenTextures(1, &ID);
-    glActiveTexture(slot);
+    glActiveTexture(GL_TEXTURE0 + slot);
+    unit = slot;
     glBindTexture(texType, ID);
 
     // wrapping
@@ -52,7 +53,7 @@ void Texture::texUnit(Shader& shader, const char* uniform, unsigned int unit)
 
 void Texture::Bind(GLenum slot)
 {
-    glActiveTexture(slot);
+    glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(type, ID);
 }
 

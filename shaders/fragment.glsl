@@ -29,7 +29,7 @@ void main()
     float spec = 0.0;
 
     if(diffuse > 0.0)
-{
+    {
         spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
     }
 
